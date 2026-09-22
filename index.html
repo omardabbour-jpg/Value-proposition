@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Widget Generator — Value Proposition Activity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #16233F;
+    --navy-2: #1F3358;
+    --gold: #F4B942;
+    --gold-dark: #C98F1F;
+    --teal: #1FA398;
+    --teal-bg: #E4F7F4;
+    --orange: #E85D2B;
+    --orange-bg: #FDEAE0;
+    --purple: #7C5CE0;
+    --purple-bg: #EFEAFB;
+    --gold-2: #D89A1B;
+    --gold-2-bg: #FCF2DC;
+    --blue: #2F6FDE;
+    --blue-bg: #E7EFFC;
+    --paper: #FBFAF7;
+    --paper-2: #F2F0EA;
+    --ink: #16233F;
+    --ink-soft: #4A5570;
+    --line: #DEDBD1;
+    --card: #FFFFFF;
+    --shadow: 0 10px 24px rgba(22,35,63,0.10);
+    --radius-lg: 22px;
+    --radius-md: 14px;
+    font-size: 16px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #10192C;
+      --paper-2: #16233F;
+      --ink: #F2F0EA;
+      --ink-soft: #B9C2D6;
+      --line: #2C3A5C;
+      --card: #182746;
+      --shadow: 0 10px 28px rgba(0,0,0,0.35);
+      --teal-bg: #123832;
+      --orange-bg: #3A2416;
+      --purple-bg: #241A3E;
+      --gold-2-bg: #3A2E12;
+      --blue-bg: #16233F;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #10192C;
+    --paper-2: #16233F;
+    --ink: #F2F0EA;
+    --ink-soft: #B9C2D6;
+    --line: #2C3A5C;
+    --card: #182746;
+    --shadow: 0 10px 28px rgba(0,0,0,0.35);
+    --teal-bg: #123832;
+    --orange-bg: #3A2416;
+    --purple-bg: #241A3E;
+    --gold-2-bg: #3A2E12;
+    --blue-bg: #16233F;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+  }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    -webkit-font-smoothing: antialiased;
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+
+  h1, h2, h3, .display {
+    font-family: 'Fredoka', system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  a { color: inherit; }
+
+  .wrap {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 0 20px 80px;
+  }
+
+  /* ---------- Header ---------- */
+  .hero {
+    background: var(--navy);
+    background-image:
+      radial-gradient(circle at 12% 20%, rgba(244,185,66,0.16), transparent 40%),
+      radial-gradient(circle at 88% 80%, rgba(124,92,224,0.20), transparent 45%);
+    color: #FBFAF7;
+    padding: calc(env(safe-area-inset-top, 0px) + 40px) 20px 34px;
+  }
+  .hero-inner {
+    max-width: 880px;
+    margin: 0 auto;
+  }
+  .kicker {
+    font-size: 0.85rem;
+    color: var(--gold);
+    font-weight: 600;
+    margin: 0 0 6px;
+  }
+  .hero h1 {
+    font-size: clamp(1.8rem, 5vw, 2.6rem);
+    margin: 0 0 10px;
+    line-height: 1.08;
+  }
+  .hero p {
+    margin: 0;
+    max-width: 56ch;
+    color: #D6DCEC;
+    font-size: 1.02rem;
+    line-height: 1.5;
+  }
+
+  /* ---------- How to play ---------- */
+  .howto {
+    margin: 30px 0 10px;
+  }
+  .howto-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    cursor: pointer;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    padding: 18px 22px;
+  }
+  .howto-head h2 { margin: 0; font-size: 1.15rem; }
+  .howto-head p { margin: 3px 0 0; color: var(--ink-soft); font-size: 0.86rem; }
+  .howto-toggle {
+    flex: 0 0 auto;
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.2s ease;
+  }
+  .howto.open .howto-toggle { transform: rotate(45deg); }
+  .howto-steps {
+    display: none;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .howto.open .howto-steps { display: grid; }
+  .howto-step {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 14px 18px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .howto-step .num {
+    flex: 0 0 auto;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--gold);
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 0.82rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .howto-step h4 { margin: 2px 0 3px; font-size: 0.95rem; }
+  .howto-step p { margin: 0; color: var(--ink-soft); font-size: 0.87rem; line-height: 1.48; }
+
+  /* ---------- Generator ---------- */
+  .generator {
+    margin-top: -26px;
+  }
+  .slot {
+    background: var(--card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--line);
+    padding: 30px 24px;
+    text-align: center;
+  }
+  .slot.has-widget { text-align: left; }
+
+  .empty-state { padding: 18px 0 8px; }
+  .empty-state .icon-ring {
+    width: 76px; height: 76px;
+    border-radius: 50%;
+    border: 2px dashed var(--line);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 18px;
+    color: var(--ink-soft);
+  }
+  .empty-state p {
+    color: var(--ink-soft);
+    margin: 0 auto 22px;
+    max-width: 38ch;
+    line-height: 1.5;
+  }
+
+  .btn {
+    font-family: 'Fredoka', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 1.02rem;
+    border: none;
+    border-radius: 999px;
+    padding: 15px 30px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .btn:active { transform: translateY(1px) scale(0.98); }
+  .btn-primary {
+    background: var(--gold);
+    color: var(--navy);
+    box-shadow: 0 6px 0 var(--gold-dark);
+  }
+  .btn-primary:hover { box-shadow: 0 4px 0 var(--gold-dark); transform: translateY(2px); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--ink);
+    border: 1.5px solid var(--line);
+  }
+  .btn-secondary:hover { border-color: var(--ink-soft); }
+  .btn:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+  .btn[disabled] { opacity: 0.45; cursor: not-allowed; }
+
+  .widget-card { display: none; }
+  .widget-card.show {
+    display: flex;
+    gap: 20px;
+    animation: pop-in 0.4s cubic-bezier(.2,.9,.3,1.2);
+  }
+  @keyframes pop-in {
+    from { opacity: 0; transform: translateY(10px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .w-icon {
+    flex: 0 0 84px;
+    width: 84px; height: 84px;
+    border-radius: 22px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .w-icon svg { width: 46px; height: 46px; }
+  .w-body { flex: 1; min-width: 0; }
+  .w-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .w-name { font-size: 1.3rem; margin: 0 0 4px; }
+  .w-pill {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 5px 11px;
+    border-radius: 999px;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+  .w-context {
+    color: var(--ink-soft);
+    line-height: 1.55;
+    margin: 10px 0 12px;
+    font-size: 0.97rem;
+  }
+  .w-focus { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+  .w-focus span {
+    font-size: 0.74rem;
+    font-weight: 600;
+    background: var(--paper-2);
+    color: var(--ink-soft);
+    padding: 4px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+  }
+  .slot-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+
+  /* ---------- Section labels ---------- */
+  .section-intro {
+    margin: 46px 0 18px;
+  }
+  .section-intro h2 { font-size: 1.4rem; margin: 0 0 6px; }
+  .section-intro p { color: var(--ink-soft); margin: 0; line-height: 1.5; max-width: 60ch; }
+
+  fieldset.locked {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .lock-note {
+    display: none;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 18px;
+  }
+  .lock-note.show { display: block; }
+
+  /* ---------- Part cards ---------- */
+  .part {
+    background: var(--card);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    margin-bottom: 18px;
+    overflow: hidden;
+  }
+  .part-head {
+    padding: 16px 22px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .part-num {
+    font-family: 'Fredoka', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    flex: 0 0 auto;
+  }
+  .part-head h3 { margin: 0; font-size: 1.08rem; }
+  .part-sub { font-size: 0.84rem; color: var(--ink-soft); margin: 1px 0 0; }
+  .part-body { padding: 4px 22px 22px; }
+
+  .field { margin-bottom: 14px; }
+  .field:last-child { margin-bottom: 0; }
+  .field label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+  .field input[type="text"], .field textarea {
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.97rem;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 13px;
+    resize: vertical;
+    line-height: 1.45;
+  }
+  .field textarea { min-height: 62px; }
+  .field input:focus, .field textarea:focus {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px var(--blue-bg);
+  }
+  .trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  @media (max-width: 620px) { .trio { grid-template-columns: 1fr; } }
+
+  .part--1 .part-num { background: var(--teal); } .part--1 .part-head { background: var(--teal-bg); }
+  .part--2 .part-num { background: var(--orange); } .part--2 .part-head { background: var(--orange-bg); }
+  .part--3 .part-num { background: var(--purple); } .part--3 .part-head { background: var(--purple-bg); }
+  .part--4 .part-num { background: var(--gold-2); } .part--4 .part-head { background: var(--gold-2-bg); }
+  .part--final .part-num { background: var(--blue); } .part--final .part-head { background: var(--blue-bg); }
+
+  /* ---------- Big picture checklist ---------- */
+  .checklist {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    padding: 22px;
+    margin: 6px 0 18px;
+  }
+  .checklist h3 { margin: 0 0 4px; font-size: 1.05rem; }
+  .checklist > p { margin: 0 0 14px; color: var(--ink-soft); font-size: 0.88rem; }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    padding: 9px 0;
+    border-top: 1px solid var(--line);
+    cursor: pointer;
+  }
+  .check-item:first-of-type { border-top: none; }
+  .check-item input {
+    margin-top: 3px;
+    width: 18px; height: 18px;
+    accent-color: var(--teal);
+    flex: 0 0 auto;
+  }
+  .check-item span { font-size: 0.93rem; line-height: 1.4; }
+  .check-item.done span { color: var(--ink-soft); text-decoration: line-through; }
+
+  /* ---------- Bottom actions ---------- */
+  .bottom-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 26px;
+  }
+  .save-status {
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .save-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--teal);
+  }
+  .bottom-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  footer.credit {
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 0.78rem;
+    margin-top: 36px;
+  }
+
+  /* modal */
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(16,25,44,0.55);
+    display: none;
+    align-items: center; justify-content: center;
+    padding: 20px;
+    z-index: 20;
+  }
+  .modal-backdrop.show { display: flex; }
+  .modal {
+    background: var(--card);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    max-width: 380px;
+    box-shadow: var(--shadow);
+  }
+  .modal h3 { margin: 0 0 8px; font-size: 1.1rem; }
+  .modal p { margin: 0 0 18px; color: var(--ink-soft); font-size: 0.92rem; line-height: 1.5; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <p class="kicker">Value Proposition Activity · Mystery Widget Pitch Tank</p>
+    <h1>Pull a widget. Build its value proposition. Pitch it.</h1>
+    <p>Everything for today's activity lives on this page: the game rules, your widget assignment, and the fill-in template. No paper, no pen — everything you type is saved right here as you go.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="howto" id="howto">
+    <div class="howto-head" id="howtoHead">
+      <div>
+        <h2>How to play — Mystery Widget Pitch Tank</h2>
+        <p>Tap to expand the 6 rounds your team will run through</p>
+      </div>
+      <div class="howto-toggle">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      </div>
+    </div>
+    <div class="howto-steps">
+      <div class="howto-step">
+        <div class="num">1</div>
+        <div><h4>Draw a widget and an origin story</h4><p>Press Generate below to get your team's product. Decide as a group whether your company is Product-Led (built it, then found buyers) or Market-Led (found the need, then built it) — your assigned widget's background will help you argue either way.</p></div>
+      </div>
+      <div class="howto-step">
+        <div class="num">2</div>
+        <div><h4>Fill in the 7 characteristics</h4><p>Use the "rich in" tags on your widget card as a starting point, then complete Parts 2–4 of the template: 3 product characteristics, 3 service characteristics, 3 customer expectations.</p></div>
+      </div>
+      <div class="howto-step">
+        <div class="num">3</div>
+        <div><h4>Write the mission statement</h4><p>One sentence, modeled on McDonald's: "Food of a constant quality that is served quickly and consistently across the globe." It should reflect both your product and the expectations you're setting.</p></div>
+      </div>
+      <div class="howto-step">
+        <div class="num">4</div>
+        <div><h4>Check Value, Need, and Trust</h4><p>Before pitching, make sure Part 1 clearly answers: what VALUE does this solve, what NEED does it address, and why would a customer TRUST this brand over a competitor's version of the same object?</p></div>
+      </div>
+      <div class="howto-step">
+        <div class="num">5</div>
+        <div><h4>60-second pitch to the investor panel</h4><p>Pitch your reinvented widget to classmates acting as investors. They can only ask questions tied to the 7 characteristics or the Value/Need/Trust triangle — no generic "I like it" feedback.</p></div>
+      </div>
+      <div class="howto-step">
+        <div class="num">6</div>
+        <div><h4>Panel scores and class debrief</h4><p>Investors score whether you named a real need, built trust, hit all 7 characteristics, and landed a tight mission statement. Discuss as a class which origin story was most convincing, and why.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="generator">
+    <div class="slot" id="slot">
+      <div class="empty-state" id="emptyState">
+        <div class="icon-ring">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v6m0 0l3-3m-3 3L9 6"/><rect x="4" y="11" width="16" height="9" rx="2"/></svg>
+        </div>
+        <p>Your team hasn't been assigned a widget yet. Press generate to get a product, its backstory, and where its value proposition is strongest.</p>
+        <button class="btn btn-primary" id="generateBtn">Generate My Widget</button>
+      </div>
+
+      <div class="widget-card" id="widgetCard">
+        <div class="w-icon" id="wIcon"></div>
+        <div class="w-body">
+          <div class="w-top">
+            <h2 class="w-name" id="wName"></h2>
+            <span class="w-pill" id="wPill"></span>
+          </div>
+          <p class="w-context" id="wContext"></p>
+          <div class="w-focus" id="wFocus"></div>
+          <div class="slot-actions">
+            <button class="btn btn-secondary" id="newWidgetBtn">New Widget</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-intro">
+    <h2>Build the value proposition</h2>
+    <p>Fill in each part below for the widget you were assigned. Everything autosaves in this browser as you type.</p>
+  </div>
+
+  <div class="lock-note" id="lockNote">Generate a widget above to unlock this template.</div>
+
+  <fieldset class="locked" id="formFieldset" style="border:none; padding:0; margin:0;">
+
+    <form id="vpForm">
+
+      <div class="part part--1">
+        <div class="part-head">
+          <div class="part-num">1</div>
+          <div>
+            <h3>Introduce your value proposition</h3>
+            <p class="part-sub">Name it, and explain the need behind it</p>
+          </div>
+        </div>
+        <div class="part-body">
+          <div class="field">
+            <label for="p1_name">Value proposition name</label>
+            <input type="text" id="p1_name" placeholder="Give your idea a name">
+          </div>
+          <div class="field">
+            <label for="p1_problem">Problem, need, or preference being addressed</label>
+            <textarea id="p1_problem" placeholder="What does this solve, and for whom?"></textarea>
+          </div>
+          <div class="field">
+            <label for="p1_why">Why you came up with the idea</label>
+            <textarea id="p1_why" placeholder="What sparked this direction?"></textarea>
+          </div>
+          <div class="field">
+            <label for="p1_value">Value &amp; utility</label>
+            <textarea id="p1_value" placeholder="Why would customers value it, and how would they use it?"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="part part--2">
+        <div class="part-head">
+          <div class="part-num">2</div>
+          <div>
+            <h3>Define your primary product(s)</h3>
+            <p class="part-sub">3 essential product characteristics</p>
+          </div>
+        </div>
+        <div class="part-body">
+          <div class="trio">
+            <div class="field"><label for="p2_a">Characteristic 1</label><input type="text" id="p2_a" placeholder="e.g. Functionality"></div>
+            <div class="field"><label for="p2_b">Characteristic 2</label><input type="text" id="p2_b" placeholder="e.g. Appearance"></div>
+            <div class="field"><label for="p2_c">Characteristic 3</label><input type="text" id="p2_c" placeholder="e.g. Quality"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="part part--3">
+        <div class="part-head">
+          <div class="part-num">3</div>
+          <div>
+            <h3>Define your primary service(s)</h3>
+            <p class="part-sub">3 essential service characteristics</p>
+          </div>
+        </div>
+        <div class="part-body">
+          <div class="trio">
+            <div class="field"><label for="p3_a">Characteristic 1</label><input type="text" id="p3_a" placeholder="e.g. Warranty"></div>
+            <div class="field"><label for="p3_b">Characteristic 2</label><input type="text" id="p3_b" placeholder="e.g. Service &amp; support"></div>
+            <div class="field"><label for="p3_c">Characteristic 3</label><input type="text" id="p3_c" placeholder="e.g. Packaging"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="part part--4">
+        <div class="part-head">
+          <div class="part-num">4</div>
+          <div>
+            <h3>Define your primary expectation(s)</h3>
+            <p class="part-sub">3 essential characteristics customers should expect</p>
+          </div>
+        </div>
+        <div class="part-body">
+          <div class="trio">
+            <div class="field"><label for="p4_a">Characteristic 1</label><input type="text" id="p4_a" placeholder="e.g. Brand"></div>
+            <div class="field"><label for="p4_b">Characteristic 2</label><input type="text" id="p4_b" placeholder="e.g. Consistency"></div>
+            <div class="field"><label for="p4_c">Characteristic 3</label><input type="text" id="p4_c" placeholder="e.g. Trust"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="part part--final">
+        <div class="part-head">
+          <div class="part-num">★</div>
+          <div>
+            <h3>Mission statement</h3>
+            <p class="part-sub">One sentence, in the spirit of your product and service</p>
+          </div>
+        </div>
+        <div class="part-body">
+          <div class="field">
+            <label for="pf_mission">Mission statement</label>
+            <textarea id="pf_mission" placeholder="e.g. Food of a constant quality that is served quickly and consistently across the globe."></textarea>
+          </div>
+        </div>
+      </div>
+
+    </form>
+
+    <div class="checklist">
+      <h3>The big picture</h3>
+      <p>Before you're done, your answers above should let anyone answer these four questions:</p>
+      <label class="check-item"><input type="checkbox" data-check="offer"><span>What are we offering?</span></label>
+      <label class="check-item"><input type="checkbox" data-check="who"><span>Who is it for?</span></label>
+      <label class="check-item"><input type="checkbox" data-check="why"><span>Why does it matter?</span></label>
+      <label class="check-item"><input type="checkbox" data-check="experience"><span>What experience are we promising our customers?</span></label>
+    </div>
+
+    <div class="bottom-bar">
+      <div class="save-status"><span class="save-dot"></span><span id="saveStatusText">Autosaves as you type</span></div>
+      <div class="bottom-btns">
+        <button type="button" class="btn btn-secondary" id="downloadBtn" style="display:none;">Download my answers</button>
+      </div>
+    </div>
+
+  </fieldset>
+
+  <footer class="credit">Value Proposition Activity — digital companion. Nothing you write here leaves this browser unless you download it.</footer>
+</div>
+
+<div class="modal-backdrop" id="confirmModal">
+  <div class="modal">
+    <h3>Start a new widget?</h3>
+    <p>You have answers filled in for your current widget. Getting a new one will clear the form below so you can start fresh.</p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="cancelNew">Cancel</button>
+      <button class="btn btn-primary" id="confirmNew">Clear &amp; Generate</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  "use strict";
+
+  var CATS = {
+    hype:   { label: "Brand & Hype-Led",       color: "var(--orange)", bg: "var(--orange-bg)" },
+    func:   { label: "Functionality-First",     color: "var(--teal)",   bg: "var(--teal-bg)" },
+    sub:    { label: "Subscription / Service",  color: "var(--blue)",   bg: "var(--blue-bg)" },
+    caution:{ label: "Cautionary Tale",         color: "var(--purple)", bg: "var(--purple-bg)" },
+    pack:   { label: "Packaging Innovation",    color: "var(--gold-2)", bg: "var(--gold-2-bg)" }
+  };
+
+  var ICONS = {
+    tumbler: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h8l-1 15a3 3 0 0 1-3 3h-.0a3 3 0 0 1-3-3L7 3Z"/><path d="M6.3 7h11.4"/><path d="M17 6c1.8 0 3 1 3 2.5S18.8 11 17 11"/></svg>',
+    can: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="4" width="10" height="16" rx="2"/><ellipse cx="12" cy="4" rx="5" ry="1.4"/><path d="M9.5 9.5c.6.6.6 1.6 0 2.2M14.5 12.5c.6.6.6 1.6 0 2.2"/></svg>',
+    giftbox: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="9" width="16" height="11" rx="1.5"/><path d="M4 13h16"/><path d="M12 9v11"/><path d="M8 9c-1.7 0-3-1-3-2.5S6.3 4 8 4c1.8 0 3.5 2.2 4 5-.5-2.8 1.8-5 4-5 1.7 0 3 1 3 2.5S17.8 9 16 9"/><circle cx="12" cy="5.2" r=".2" fill="currentColor"/><text x="12" y="17.5" font-size="5" text-anchor="middle" fill="currentColor" stroke="none">?</text></svg>',
+    bottle: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3h4v3l1.5 2.5v11a1.5 1.5 0 0 1-1.5 1.5h-4A1.5 1.5 0 0 1 8.5 19.5v-11L10 6V3Z"/><path d="M9 12h6"/></svg>',
+    tag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5.5"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><path d="M6.5 6.5a10 10 0 0 0 0 11M17.5 6.5a10 10 0 0 1 0 11"/></svg>',
+    treadmill: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="15" width="15" height="3.2" rx="1.6"/><path d="M6 15V9.5a2 2 0 0 1 2-2h2"/><circle cx="16.5" cy="7" r="1.6"/><path d="M15 12l2-2.3 2.5 1.3-1 3.5"/></svg>',
+    patch: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7"/><path d="M12 8.5v4l2.6 1.5"/><path d="M9 4.5 12 2l3 2.5"/></svg>',
+    firepit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c1.4 2.4-.6 3.4-.6 5.2 0 1.3 1 2 1.9 2 1.3 0 2-1.1 1.8-2.4 1.7 1.6 2.4 3.6 2.4 5.2A5.5 5.5 0 0 1 12 18.5 5.5 5.5 0 0 1 6.5 13c0-3.4 2.6-5.4 3.6-7.4.4-.8 1.1-1.8 1.9-2.6Z"/><ellipse cx="12" cy="20" rx="7" ry="1.4"/></svg>',
+    ring: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="14" r="6"/><path d="M8 4.5h8l-1.3 4.8H9.3L8 4.5Z"/><path d="M9 13.5l2 2 4-4"/></svg>',
+    doorbell: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="10" height="18" rx="3"/><circle cx="12" cy="9" r="2.6"/><path d="M10.5 15h3M10.5 17.5h3"/></svg>',
+    pin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7.5" y="3" width="9" height="9" rx="2.5"/><circle cx="12" cy="7.5" r="1.5" fill="currentColor" stroke="none"/><path d="M9 16.5 6 21M15 16.5l3 4.5M12 12v9"/></svg>',
+    necklace: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4c0 6 3.5 9 8 9s8-3 8-9"/><circle cx="12" cy="16.5" r="3"/></svg>',
+    oilbottle: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 3h3v2.5l2 2V19a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2V7.5l2-2V3Z"/><path d="M12 22v-2"/></svg>'
+  };
+
+  var WIDGETS = [
+    {
+      id: "stanley", name: "Insulated Tumbler (Stanley-style Quencher)", cat: "hype", icon: "tumbler",
+      context: "A century-old, product-led company whose flagship tumbler got a second life after a 2022–24 viral relaunch driven almost entirely by social media, not new engineering. The physical function barely changed — the value proposition is carried by color drops, collector culture, and a lifetime warranty.",
+      focus: ["Brand", "Appearance", "Warranty"]
+    },
+    {
+      id: "liquiddeath", name: "Canned Still Water (Liquid Death-style)", cat: "hype", icon: "can",
+      context: "A company that sells plain water in a tallboy can with heavy-metal branding. The product is functionally identical to any bottled water — every ounce of the value proposition comes from Brand and Appearance, making it a useful case for asking whether branding alone counts as \"value.\"",
+      focus: ["Brand", "Appearance"]
+    },
+    {
+      id: "labubu", name: "Collectible Blind-Box Figure (Labubu-style)", cat: "hype", icon: "giftbox",
+      context: "A mystery collectible sold in sealed boxes — buyers don't know which figure they'll get until they open it. Here the Packaging itself is the core experience, not just protection for the product, and scarcity drives most of the Brand loyalty and resale value.",
+      focus: ["Packaging", "Brand"]
+    },
+    {
+      id: "prime", name: "Influencer Sports Drink (Prime Hydration-style)", cat: "hype", icon: "bottle",
+      context: "A hydration drink launched by online creators rather than a beverage company. Demand was built before the product had much of a track record, which raises a real question for students: is this genuinely Product-Led or Market-Led, and what happens to Quality and Trust when hype outruns the product?",
+      focus: ["Brand", "Trust"]
+    },
+    {
+      id: "airtag", name: "Bluetooth Item Tracker (AirTag-style)", cat: "func", icon: "tag",
+      context: "A coin-sized tracker that clips to keys, bags, or luggage and reports its location through a wide finder network. Its value proposition rests on tight Functionality, a Privacy/Trust story around location data, compact Packaging, and an ecosystem of ongoing Service & Support.",
+      focus: ["Functionality", "Trust", "Service & Support"]
+    },
+    {
+      id: "treadmill", name: "Under-Desk Walking Treadmill", cat: "func", icon: "treadmill",
+      context: "A slim treadmill designed to slide under a home desk, born directly from the shift to remote and hybrid work. A clean Market-Led story: the need (movement during desk work) existed first, and the product followed to meet it.",
+      focus: ["Functionality", "Quality"]
+    },
+    {
+      id: "cgm", name: "Wearable Glucose Monitor (CGM-style)", cat: "func", icon: "patch",
+      context: "A small skin patch that continuously tracks blood sugar and syncs to a phone app, increasingly sold direct to consumers beyond just people with diabetes. Because it's health data, Quality and Warranty/Service carry real stakes — a good case for discussing regulatory trust.",
+      focus: ["Quality", "Warranty"]
+    },
+    {
+      id: "solostove", name: "Smokeless Backyard Fire Pit (Solo Stove-style)", cat: "func", icon: "firepit",
+      context: "A double-walled steel fire pit engineered to burn wood with far less smoke than a traditional pit. Functionality is the entire pitch, backed by strong direct-to-consumer Packaging and unboxing that reinforces the premium price.",
+      focus: ["Functionality", "Packaging"]
+    },
+    {
+      id: "smartring", name: "Sleep & Fitness Tracking Ring (Oura/Whoop-style)", cat: "sub", icon: "ring",
+      context: "A ring or band that's cheap to manufacture, paired with an app subscription that's the real business model. The Service & Support isn't an add-on here — it *is* the value proposition, since the hardware alone does very little without ongoing data and coaching.",
+      focus: ["Service & Support", "Functionality"]
+    },
+    {
+      id: "ringdoorbell", name: "Smart Video Doorbell (Ring-style)", cat: "sub", icon: "doorbell",
+      context: "A doorbell camera that streams to your phone, often bundled with a cloud recording subscription. Like the smart ring, ongoing Service & Support drives recurring revenue — and it opens a genuine Warranty/Trust conversation about home security and data privacy.",
+      focus: ["Service & Support", "Trust"]
+    },
+    {
+      id: "aipin", name: "Wearable AI Assistant Pin (Humane/Rabbit-style)", cat: "caution", icon: "pin",
+      context: "A clip-on or handheld AI device launched in 2024 with major hype but mixed reviews citing slow performance and unclear daily use cases. A strong case for a 'what went wrong' round — teams must find real Functionality and a clear Need, not just novelty.",
+      focus: ["Functionality", "Need clarity"]
+    },
+    {
+      id: "aifriend", name: "AI Companion Necklace (Friend-style)", cat: "caution", icon: "necklace",
+      context: "A pendant that listens and offers AI companionship, backed by a polarizing ad campaign. Reviewers and the public have openly debated what real need it solves, making it useful for testing whether a value proposition can survive without a clearly named problem.",
+      focus: ["Need clarity", "Trust"]
+    },
+    {
+      id: "oliveoil", name: "Squeeze-Bottle Olive Oil (Graza-style)", cat: "pack", icon: "oilbottle",
+      context: "Ordinary olive oil sold in a soft squeeze bottle instead of a traditional glass one, so cooks can drizzle it directly over a pan. The innovation lives almost entirely in the Packaging format itself, sold direct-to-consumer around that one functional twist.",
+      focus: ["Packaging", "Functionality"]
+    }
+  ];
+
+  var STORAGE_KEY = "vp-widget-activity-v1";
+  var FIELD_IDS = ["p1_name","p1_problem","p1_why","p1_value","p2_a","p2_b","p2_c","p3_a","p3_b","p3_c","p4_a","p4_b","p4_c","pf_mission"];
+  var CHECK_IDS = ["offer","who","why","experience"];
+
+  var emptyState = document.getElementById("emptyState");
+  var widgetCard = document.getElementById("widgetCard");
+  var slot = document.getElementById("slot");
+  var generateBtn = document.getElementById("generateBtn");
+  var newWidgetBtn = document.getElementById("newWidgetBtn");
+  var fieldset = document.getElementById("formFieldset");
+  var lockNote = document.getElementById("lockNote");
+  var confirmModal = document.getElementById("confirmModal");
+  var downloadBtn = document.getElementById("downloadBtn");
+  var saveStatusText = document.getElementById("saveStatusText");
+
+  var state = { widgetId: null, fields: {}, checks: {} };
+
+  function loadState() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === "object") state = parsed;
+      }
+    } catch (e) { /* start fresh */ }
+  }
+
+  function saveState() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      saveStatusText.textContent = "Saved just now";
+      setTimeout(function () { saveStatusText.textContent = "Autosaves as you type"; }, 1500);
+    } catch (e) { /* storage unavailable */ }
+  }
+
+  function findWidget(id) {
+    for (var i = 0; i < WIDGETS.length; i++) if (WIDGETS[i].id === id) return WIDGETS[i];
+    return null;
+  }
+
+  function renderWidget(w) {
+    var cat = CATS[w.cat];
+    document.getElementById("wIcon").innerHTML = ICONS[w.icon];
+    document.getElementById("wIcon").style.background = cat.bg;
+    document.getElementById("wIcon").style.color = cat.color;
+    document.getElementById("wName").textContent = w.name;
+    var pill = document.getElementById("wPill");
+    pill.textContent = cat.label;
+    pill.style.background = cat.bg;
+    pill.style.color = cat.color;
+    document.getElementById("wContext").textContent = w.context;
+    var focusEl = document.getElementById("wFocus");
+    focusEl.innerHTML = "";
+    w.focus.forEach(function (f) {
+      var span = document.createElement("span");
+      span.textContent = "Rich in: " + f;
+      focusEl.appendChild(span);
+    });
+    emptyState.style.display = "none";
+    widgetCard.classList.add("show");
+    slot.classList.add("has-widget");
+    fieldset.classList.remove("locked");
+    lockNote.classList.remove("show");
+  }
+
+  function applyFieldsToForm() {
+    FIELD_IDS.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.value = state.fields[id] || "";
+    });
+    CHECK_IDS.forEach(function (id) {
+      var el = document.querySelector('[data-check="' + id + '"]');
+      if (el) {
+        el.checked = !!state.checks[id];
+        el.closest(".check-item").classList.toggle("done", el.checked);
+      }
+    });
+  }
+
+  function hasAnyContent() {
+    for (var i = 0; i < FIELD_IDS.length; i++) {
+      if ((state.fields[FIELD_IDS[i]] || "").trim().length > 0) return true;
+    }
+    return false;
+  }
+
+  function pickNewWidget() {
+    var pool = WIDGETS;
+    if (WIDGETS.length > 1 && state.widgetId) {
+      pool = WIDGETS.filter(function (w) { return w.id !== state.widgetId; });
+    }
+    var w = pool[Math.floor(Math.random() * pool.length)];
+    state.widgetId = w.id;
+    state.fields = {};
+    state.checks = {};
+    saveState();
+    renderWidget(w);
+    applyFieldsToForm();
+    downloadBtn.style.display = "inline-flex";
+  }
+
+  generateBtn.addEventListener("click", pickNewWidget);
+
+  newWidgetBtn.addEventListener("click", function () {
+    if (hasAnyContent()) {
+      confirmModal.classList.add("show");
+    } else {
+      pickNewWidget();
+    }
+  });
+
+  document.getElementById("cancelNew").addEventListener("click", function () {
+    confirmModal.classList.remove("show");
+  });
+  document.getElementById("confirmNew").addEventListener("click", function () {
+    confirmModal.classList.remove("show");
+    pickNewWidget();
+  });
+
+  FIELD_IDS.forEach(function (id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener("input", function () {
+      state.fields[id] = el.value;
+      saveState();
+    });
+  });
+
+  document.querySelectorAll("[data-check]").forEach(function (el) {
+    el.addEventListener("change", function () {
+      state.checks[el.getAttribute("data-check")] = el.checked;
+      el.closest(".check-item").classList.toggle("done", el.checked);
+      saveState();
+    });
+  });
+
+  function buildSummaryText() {
+    var w = findWidget(state.widgetId);
+    var lines = [];
+    lines.push("VALUE PROPOSITION ACTIVITY");
+    lines.push("Widget: " + (w ? w.name : "—"));
+    lines.push("");
+    lines.push("PART 1 — Introduce your value proposition");
+    lines.push("Name: " + (state.fields.p1_name || ""));
+    lines.push("Problem / need addressed: " + (state.fields.p1_problem || ""));
+    lines.push("Why this idea: " + (state.fields.p1_why || ""));
+    lines.push("Value & utility: " + (state.fields.p1_value || ""));
+    lines.push("");
+    lines.push("PART 2 — Primary product characteristics");
+    lines.push("1. " + (state.fields.p2_a || ""));
+    lines.push("2. " + (state.fields.p2_b || ""));
+    lines.push("3. " + (state.fields.p2_c || ""));
+    lines.push("");
+    lines.push("PART 3 — Primary service characteristics");
+    lines.push("1. " + (state.fields.p3_a || ""));
+    lines.push("2. " + (state.fields.p3_b || ""));
+    lines.push("3. " + (state.fields.p3_c || ""));
+    lines.push("");
+    lines.push("PART 4 — Primary customer expectations");
+    lines.push("1. " + (state.fields.p4_a || ""));
+    lines.push("2. " + (state.fields.p4_b || ""));
+    lines.push("3. " + (state.fields.p4_c || ""));
+    lines.push("");
+    lines.push("MISSION STATEMENT");
+    lines.push(state.fields.pf_mission || "");
+    return lines.join("\n");
+  }
+
+  downloadBtn.addEventListener("click", function () {
+    var text = buildSummaryText();
+    var blob = new Blob([text], { type: "text/plain" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "value-proposition-" + (state.widgetId || "draft") + ".txt";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  });
+
+  var howto = document.getElementById("howto");
+  document.getElementById("howtoHead").addEventListener("click", function () {
+    howto.classList.toggle("open");
+  });
+  howto.classList.add("open");
+
+  // ---- init ----
+  loadState();
+  if (state.widgetId) {
+    var w = findWidget(state.widgetId);
+    if (w) {
+      renderWidget(w);
+      applyFieldsToForm();
+      downloadBtn.style.display = "inline-flex";
+    } else {
+      lockNote.classList.add("show");
+    }
+  } else {
+    lockNote.classList.add("show");
+  }
+})();
+</script>
+</body>
+</html>
